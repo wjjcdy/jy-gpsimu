@@ -4,6 +4,7 @@
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <nav_msgs/Odometry.h>
+#include <deque>
 
 #include "serial_port.hpp"
 #include "conversions.h"
@@ -57,7 +58,8 @@ namespace sensor
             bool serialConnect(void);
 
         private:
-            void ParseData(char chr);
+            void DecodeData(const char chrBuf[]);
+            void ParseData(const char chrBuf[], int length); 
             void imuPulish(void);
             void gpsPulish(void);
         private:
@@ -75,7 +77,9 @@ namespace sensor
             Gps_t pose_gps_;
             Magnetic_t magnetic_xyz_;
             std::string gps_port_;
-            char rec_buf_[1024];
+            std::deque<char> rec_buf_;
+
+            int rx_buffer_leng_;
             
     };
 }
